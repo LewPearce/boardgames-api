@@ -1,13 +1,11 @@
 const express = require("express");
 const { getCategories } = require("./controllers");
+const { handle404 } = require("./error-controllers");
 
 const app = express();
 
 app.get("/api/categories", getCategories);
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send("Server Error!");
-});
+app.use(handle404);
 
 module.exports = app;
