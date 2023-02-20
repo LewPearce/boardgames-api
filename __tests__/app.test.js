@@ -45,3 +45,5 @@ describe("/api/categories", () => {
     return request(app).get("/api/categorie").expect(404);
   });
 });
+
+const fix = 1;
