@@ -1,6 +1,7 @@
 const express = require("express");
-const { getCategories, getReviews } = require("./controllers");
-const { handle404 } = require("./error-controllers");
+const { getCategories } = require("./controllers/categories_controllers");
+const { getReviews } = require("./controllers/reviews_constrollers");
+const { handle404 } = require("./controllers/error-controllers");
 
 const app = express();
 

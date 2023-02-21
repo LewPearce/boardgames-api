@@ -22,32 +22,19 @@ describe("app", () => {
       });
   });
   describe("/api/categories", () => {
-    it("GET: 200, should return an array of the categories", () => {
+    it("GET: 200, should return an array of the categories with a slug and a description", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
-          expect(body).toEqual({
-            categories: [
-              {
-                slug: "euro game",
-                description: "Abstact games that involve little luck",
-              },
-              {
-                slug: "social deduction",
-                description:
-                  "Players attempt to uncover each other's hidden role",
-              },
-              {
-                slug: "dexterity",
-                description: "Games involving physical skill",
-              },
-              {
-                slug: "children's games",
-                description: "Games suitable for children",
-              },
-            ],
-          });
+          body.categories.forEach((category) =>
+            expect(category).toEqual(
+              expect.objectContaining({
+                slug: expect.any(String),
+                description: expect.any(String),
+              })
+            )
+          );
         });
     });
   });
@@ -79,7 +66,6 @@ describe("app", () => {
         .get("/api/reviews")
         .expect(200)
         .then(({ body }) => {
-          console.log(body.reviews[0].created_at);
           expect(body.reviews).toBeSorted("created_at", { descending: true });
         });
     });

@@ -1,12 +1,6 @@
-const db = require("../db/connection");
+const db = require("../../db/connection");
 
-const fetchCategories = () => {
-  return db.query(`SELECT * FROM categories`).then(({ rows }) => {
-    return rows;
-  });
-};
-
-const commentCounter = () => {
+const fetchReviews = () => {
   return db
     .query(
       `SELECT reviews.owner,
@@ -29,4 +23,4 @@ const commentCounter = () => {
     });
 };
 
-module.exports = { fetchCategories, commentCounter };
+module.exports = { fetchReviews };
