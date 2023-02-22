@@ -1,5 +1,17 @@
-const handle404 = (req, res, next) => {
-  return res.status(404).send({ msg: "Path not found!" });
+const handle400 = (err, req, res, next) => {
+  if (err.code === "22P02") {
+    return res.status(400).send({ msg: "bad request" });
+  } else next(err);
 };
 
-module.exports = { handle404 };
+const handleCustomErrors = (err, req, res, next) => {
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
+  }
+};
+
+const handle404 = (req, res, next) => {
+  res.status(404).send({ msg: "Path not found!" });
+};
+
+module.exports = { handle404, handle400, handleCustomErrors };

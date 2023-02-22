@@ -23,4 +23,23 @@ const fetchReviews = () => {
     });
 };
 
-module.exports = { fetchReviews };
+const fetchReviewByID = (req) => {
+  let { params } = req;
+  return db
+    .query(
+      `SELECT * FROM reviews
+  WHERE review_id = $1`,
+      [params.review_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Oops! ID:${params.review_id} doesn't exist!`,
+        });
+      } else {
+        return rows[0];
+      }
+    });
+};
+module.exports = { fetchReviews, fetchReviewByID };
