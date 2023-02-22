@@ -32,7 +32,6 @@ const fetchReviewByID = (req) => {
       [params.review_id]
     )
     .then(({ rows }) => {
-      console.log(rows);
       if (rows.length === 0) {
         return Promise.reject({
           status: 404,

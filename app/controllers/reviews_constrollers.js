@@ -12,7 +12,6 @@ const getReviewByID = (req, res, next) => {
   fetchReviewByID(req)
     .then((result) => res.status(200).send({ review: result }))
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
