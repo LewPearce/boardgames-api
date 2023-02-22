@@ -1,6 +1,10 @@
 const handle400 = (err, req, res, next) => {
   if (err.code === "22P02") {
     return res.status(400).send({ msg: "bad request" });
+  } else if (err.code === "23503") {
+    return res
+      .status(404)
+      .send({ msg: `User '${req.body.username}' not found!` });
   } else next(err);
 };
 

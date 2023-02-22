@@ -42,4 +42,34 @@ const fetchReviewByID = (req) => {
       }
     });
 };
-module.exports = { fetchReviews, fetchReviewByID };
+
+const addComment = (req) => {
+  const { review_id } = req.params;
+  const { username } = req.body;
+  const { body } = req.body;
+  return db
+    .query(
+      `INSERT INTO comments (author, body, review_id)
+  VALUES($1, $2, $3)
+  RETURNING *;
+  `,
+      [username, body, review_id]
+    )
+    .then((comment) => {
+      if (!comment) {
+        return Promise.reject({
+          status: 404,
+          msg: `Oops! that user doesn't exist!`,
+        });
+      } else if (comment.rows[0].body === "") {
+        return Promise.reject({
+          status: 400,
+          msg: `failed to submit empty comment`,
+        });
+      } else {
+        return comment.rows[0];
+      }
+    });
+};
+
+module.exports = { fetchReviews, fetchReviewByID, addComment };
