@@ -2,6 +2,7 @@ const {
   fetchReviews,
   fetchReviewByID,
   fetchCommentsByReview,
+  updateVotes,
 } = require("../models/reviews_models");
 
 const getReviews = (req, res, next) => {
@@ -30,4 +31,21 @@ const getCommentsByReview = (req, res, next) => {
     });
 };
 
-module.exports = { getReviews, getReviewByID, getCommentsByReview };
+// const patchVotes = (req, res, next) => {
+//   const reviewPromise = fetchReviewByID(req);
+//   const votePromise = updateVotes(req);
+//   return Promise.all([reviewPromise, votePromise])
+//     .then(([result]) => {
+//       res.status(201).send({ OUTPUT: result });
+//     })
+//     .catch((err) => {
+//       next(err);
+//     });
+// };
+
+module.exports = {
+  getReviews,
+  getReviewByID,
+  getCommentsByReview,
+  //  patchVotes
+};

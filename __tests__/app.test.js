@@ -183,3 +183,65 @@ describe("app", () => {
     });
   });
 });
+// describe("/api/reviews/:review_id/", () => {
+//   it("PATCH: 201, accepts an object containing an integer value to increment the votes value by, will return the updated review", () => {
+//     const voteUpBy2 = {
+//       inc_votes: "2",
+//     };
+//     return request(app)
+//       .patch("/api/reviews/1")
+//       .send(voteUpBy2)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body).toEqual({
+//           updatedComment: {
+//             title: expect.any(String),
+//             designer: expect.any(String),
+//             owner: expect.any(String),
+//             review_img_url: expect.any(String),
+//             review_body: expect.any(String),
+//             category: expect.any(String),
+//             created_at: expect.any(String),
+//             votes: 3,
+//           },
+//         });
+//       });
+//   });
+//   it("PATCH: 201, correctly handles negative numbers", () => {
+//     const voteDownBy2 = {
+//       inc_votes: "-2",
+//     };
+//     return request(app)
+//       .patch("/api/reviews/1")
+//       .send(voteDownBy2)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body).toEqual({
+//           updatedComment: {
+//             title: expect.any(String),
+//             designer: expect.any(String),
+//             owner: expect.any(String),
+//             review_img_url: expect.any(String),
+//             review_body: expect.any(String),
+//             category: expect.any(String),
+//             created_at: expect.any(String),
+//             votes: -1,
+//           },
+//         });
+//       });
+//   });
+//   it("PATCH: 400, throws an error if given an invalid data type, e.g. not an integer", () => {
+//     const voteUpByBanana = {
+//       inc_votes: "banana",
+//     };
+//     return request(app)
+//       .patch("/api/reviews/1")
+//       .send(voteUpByBanana)
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body).toEqual({
+//           msg: "must be a number",
+//         });
+//       });
+//   });
+// });

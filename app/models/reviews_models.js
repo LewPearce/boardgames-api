@@ -57,4 +57,17 @@ const fetchCommentsByReview = (req) => {
     });
 };
 
-module.exports = { fetchReviews, fetchReviewByID, fetchCommentsByReview };
+// const updateVotes = (req) => {
+//   let { body } = req;
+//   console.log(req);
+//   // return db.query(`UPDATE reviews
+//   // SET votes = votes + params
+//   // WHERE condition
+//   // RETURNING *;`);
+// };
+module.exports = {
+  fetchReviews,
+  fetchReviewByID,
+  fetchCommentsByReview,
+  // updateVotes,
+};
