@@ -107,53 +107,124 @@ describe("app", () => {
             expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
           });
       });
-    });
-  });
-  describe("/api/reviews/:review_id/comments", () => {
-    it("POST: 201, accepts a username and a body, will return a fully formatted comment", () => {
-      const newComment = {
-        username: "mallionaire",
-        body: "testing, testing, 1 2 3.",
-      };
-      return request(app)
-        .post("/api/reviews/1/comments")
-        .send(newComment)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            new_comment: {
-              author: "mallionaire",
-              body: "testing, testing, 1 2 3.",
-              comment_id: 7,
-              created_at: expect.any(String),
-              review_id: 1,
-              votes: 0,
-            },
-          });
+      describe("/api/reviews/:review_id/comments", () => {
+        it("GET: 200, retrieves specific reviews comments as an array of objects", () => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                comments: [
+                  {
+                    body: "Now this is a story all about how, board games turned my life upside down",
+                    votes: 13,
+                    author: "mallionaire",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                  {
+                    body: "I loved this game too!",
+                    votes: 16,
+                    author: "bainesface",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                  {
+                    body: "EPIC board game!",
+                    votes: 16,
+                    author: "bainesface",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                ],
+              });
+            });
         });
-    });
-    it("POST: 404, should throw an error if the user is valid but does not exist", () => {
-      const newComment = {
-        username: "not-a-username",
-        body: "testing, testing, 1 2 3.",
-      };
-      return request(app)
-        .post("/api/reviews/1/comments")
-        .send(newComment)
-        .expect(404)
-        .then(({ body }) => {
-          expect(body).toEqual({ msg: "User 'not-a-username' not found!" });
+        it("GET: 200, should return an array of the comments sorted by created_at in descending order", () => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments).toBeSorted("created_at", {
+                descending: true,
+              });
+            });
         });
-    });
-    it("POST: 400, should throw an error if the body is empty", () => {
-      const newComment = { username: "mallionaire", body: "" };
-      return request(app)
-        .post("/api/reviews/1/comments")
-        .send(newComment)
-        .expect(400)
-        .then(({ body }) => {
-          expect(body).toEqual({ msg: "failed to submit empty comment" });
+        it("GET: 200, returns an empty array if there are no comments", () => {
+          return request(app)
+            .get("/api/reviews/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                comments: [],
+              });
+            });
         });
+        it("GET: 404, if the id does not exist it will throw an error, not return an array", () => {
+          return request(app)
+            .get("/api/reviews/999/comments")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
+            });
+        });
+        it("GET: 400, if the id is not valid it will throw an error, not return an array", () => {
+          return request(app)
+            .get("/api/reviews/not-an-id/comments")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "bad request" });
+            });
+        });
+        it("POST: 201, accepts a username and a body, will return a fully formatted comment", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                new_comment: {
+                  author: "mallionaire",
+                  body: "testing, testing, 1 2 3.",
+                  comment_id: 7,
+                  created_at: expect.any(String),
+                  review_id: 1,
+                  votes: 0,
+                },
+              });
+            });
+        });
+        it("POST: 404, should throw an error if the user is valid but does not exist", () => {
+          const newComment = {
+            username: "not-a-username",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "User 'not-a-username' not found!" });
+            });
+        });
+        it("POST: 400, should throw an error if the body is empty", () => {
+          const newComment = { username: "mallionaire", body: "" };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "failed to submit empty comment" });
+            });
+        });
+      });
     });
   });
 });

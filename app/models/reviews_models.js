@@ -72,4 +72,23 @@ const addComment = (req) => {
     });
 };
 
-module.exports = { fetchReviews, fetchReviewByID, addComment };
+const fetchCommentsByReview = (req) => {
+  let { params } = req;
+  return db
+    .query(
+      `SELECT * FROM comments
+            WHERE review_id = $1
+			ORDER BY created_at DESC`,
+      [params.review_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+module.exports = {
+  fetchReviews,
+  fetchReviewByID,
+  addComment,
+  fetchCommentsByReview,
+};
