@@ -107,6 +107,79 @@ describe("app", () => {
             expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
           });
       });
+      describe("/api/reviews/:review_id/comments", () => {
+        it("GET: 200, retrieves specific reviews comments as an array of objects", () => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                comments: [
+                  {
+                    body: "Now this is a story all about how, board games turned my life upside down",
+                    votes: 13,
+                    author: "mallionaire",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                  {
+                    body: "I loved this game too!",
+                    votes: 16,
+                    author: "bainesface",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                  {
+                    body: "EPIC board game!",
+                    votes: 16,
+                    author: "bainesface",
+                    review_id: 2,
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                  },
+                ],
+              });
+            });
+        });
+        it("GET: 200, should return an array of the comments sorted by created_at in descending order", () => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments).toBeSorted("created_at", {
+                descending: true,
+              });
+            });
+        });
+        it("GET: 200, returns an empty array if there are no comments", () => {
+          return request(app)
+            .get("/api/reviews/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                comments: [],
+              });
+            });
+        });
+        it("GET: 404, if the id does not exist it will throw an error, not return an array", () => {
+          return request(app)
+            .get("/api/reviews/999/comments")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
+            });
+        });
+        it("GET: 400, if the id is not valid it will throw an error, not return an array", () => {
+          return request(app)
+            .get("/api/reviews/not-an-id/comments")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "bad request" });
+            });
+        });
+      });
     });
   });
 });
