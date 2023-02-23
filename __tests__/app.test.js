@@ -107,6 +107,122 @@ describe("app", () => {
             expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
           });
       });
+      it("PATCH: 201, accepts an object containing an integer value to increment the votes value by, will return the updated review", () => {
+        const voteUpBy2 = {
+          inc_votes: "2",
+        };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(voteUpBy2)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              updatedComment: {
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                review_body: expect.any(String),
+                review_id: 1,
+                category: expect.any(String),
+                created_at: expect.any(String),
+                votes: 3,
+              },
+            });
+          });
+      });
+      it("PATCH: 201, correctly handles negative numbers", () => {
+        const voteDownBy2 = {
+          inc_votes: "-2",
+        };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(voteDownBy2)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              updatedComment: {
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                review_body: expect.any(String),
+                review_id: 1,
+                category: expect.any(String),
+                created_at: expect.any(String),
+                votes: -1,
+              },
+            });
+          });
+      });
+      it("PATCH: 201, ignores extraneous properties", () => {
+        const voteUpBy2 = {
+          inc_votes: "2",
+          votes: "73874837",
+          inc_boats: "394727420",
+        };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(voteUpBy2)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              updatedComment: {
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                review_body: expect.any(String),
+                review_id: 1,
+                category: expect.any(String),
+                created_at: expect.any(String),
+                votes: 3,
+              },
+            });
+          });
+      });
+      it("PATCH: 400, throws an error if given an invalid data type, e.g. not an integer", () => {
+        const voteUpByBanana = {
+          inc_votes: "banana",
+        };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(voteUpByBanana)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              msg: "bad request",
+            });
+          });
+      });
+      it("PATCH: 400, throws an error if given an invalid review_id", () => {
+        const voteUpBy5 = {
+          inc_votes: "5",
+        };
+        return request(app)
+          .patch("/api/reviews/AAAAAAAAA")
+          .send(voteUpBy5)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              msg: "bad request",
+            });
+          });
+      });
+      it("PATCH: 404, throws an error if given a valid but non-existent review_id", () => {
+        const voteUpBy5 = {
+          inc_votes: "5",
+        };
+        return request(app)
+          .patch("/api/reviews/67888")
+          .send(voteUpBy5)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              msg: "Oops! ID:67888 doesn't exist!",
+            });
+          });
+      });
       describe("/api/reviews/:review_id/comments", () => {
         it("GET: 200, retrieves specific reviews comments as an array of objects", () => {
           return request(app)
@@ -271,65 +387,3 @@ describe("app", () => {
     });
   });
 });
-// describe("/api/reviews/:review_id/", () => {
-//   it("PATCH: 201, accepts an object containing an integer value to increment the votes value by, will return the updated review", () => {
-//     const voteUpBy2 = {
-//       inc_votes: "2",
-//     };
-//     return request(app)
-//       .patch("/api/reviews/1")
-//       .send(voteUpBy2)
-//       .expect(201)
-//       .then(({ body }) => {
-//         expect(body).toEqual({
-//           updatedComment: {
-//             title: expect.any(String),
-//             designer: expect.any(String),
-//             owner: expect.any(String),
-//             review_img_url: expect.any(String),
-//             review_body: expect.any(String),
-//             category: expect.any(String),
-//             created_at: expect.any(String),
-//             votes: 3,
-//           },
-//         });
-//       });
-//   });
-//   it("PATCH: 201, correctly handles negative numbers", () => {
-//     const voteDownBy2 = {
-//       inc_votes: "-2",
-//     };
-//     return request(app)
-//       .patch("/api/reviews/1")
-//       .send(voteDownBy2)
-//       .expect(201)
-//       .then(({ body }) => {
-//         expect(body).toEqual({
-//           updatedComment: {
-//             title: expect.any(String),
-//             designer: expect.any(String),
-//             owner: expect.any(String),
-//             review_img_url: expect.any(String),
-//             review_body: expect.any(String),
-//             category: expect.any(String),
-//             created_at: expect.any(String),
-//             votes: -1,
-//           },
-//         });
-//       });
-//   });
-//   it("PATCH: 400, throws an error if given an invalid data type, e.g. not an integer", () => {
-//     const voteUpByBanana = {
-//       inc_votes: "banana",
-//     };
-//     return request(app)
-//       .patch("/api/reviews/1")
-//       .send(voteUpByBanana)
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body).toEqual({
-//           msg: "must be a number",
-//         });
-//       });
-//   });
-// });
