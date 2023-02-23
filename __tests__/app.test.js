@@ -271,3 +271,16 @@ describe("app", () => {
     });
   });
 });
+//   describe("/api/users", () => {
+//     it("GET: 200, returns an array of all users with a username, name and avatar url", () => {
+//       return request(app)
+//         .get("/api/users")
+//         .expect(200)
+//         .then(({ body }) => {
+//           body.users.forEach((user) =>
+//             expect(user).toEqual({ name: 380928309 })
+//           );
+//         });
+//     });
+//   });
+// });
