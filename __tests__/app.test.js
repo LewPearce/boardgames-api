@@ -179,6 +179,94 @@ describe("app", () => {
               expect(body).toEqual({ msg: "bad request" });
             });
         });
+        it("POST: 201, accepts a username and a body, will return a fully formatted comment", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                new_comment: {
+                  author: "mallionaire",
+                  body: "testing, testing, 1 2 3.",
+                  comment_id: 7,
+                  created_at: expect.any(String),
+                  review_id: 1,
+                  votes: 0,
+                },
+              });
+            });
+        });
+        it("POST: 201, unnecessary properties on request body are ignored", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+            random: "this shouldn't impact the posting of a comment",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                new_comment: {
+                  author: "mallionaire",
+                  body: "testing, testing, 1 2 3.",
+                  comment_id: 7,
+                  created_at: expect.any(String),
+                  review_id: 1,
+                  votes: 0,
+                },
+              });
+            });
+        });
+        it("POST: 404, should throw an error if the user is valid but does not exist", () => {
+          const newComment = {
+            username: "not-a-username",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({ msg: "not found" });
+            });
+        });
+        it("POST: 404, review_id is valid but doesn't exist", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/999/comments")
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                msg: "not found",
+              });
+            });
+        });
+        it("POST: 400, review_id is invalid", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/bananas/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                msg: "bad request",
+              });
+            });
+        });
       });
     });
   });

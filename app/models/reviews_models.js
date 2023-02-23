@@ -43,6 +43,23 @@ const fetchReviewByID = (req) => {
     });
 };
 
+const addComment = (req) => {
+  const { review_id } = req.params;
+  const { username } = req.body;
+  const { body } = req.body;
+  return db
+    .query(
+      `INSERT INTO comments (author, body, review_id)
+  VALUES($1, $2, $3)
+  RETURNING *;
+  `,
+      [username, body, review_id]
+    )
+    .then((comment) => {
+      return comment.rows[0];
+    });
+};
+
 const fetchCommentsByReview = (req) => {
   let { params } = req;
   return db
@@ -57,17 +74,19 @@ const fetchCommentsByReview = (req) => {
     });
 };
 
-// const updateVotes = (req) => {
-//   let { body } = req;
-//   console.log(body);
-//   return db.query(`UPDATE reviews
-//   SET votes = votes + params
-//   WHERE condition
-//   RETURNING *;`);
-// };
+const updateVotes = (req) => {
+  let { body } = req;
+  console.log(body);
+  return db.query(`UPDATE reviews
+  SET votes = votes + params
+  WHERE condition
+  RETURNING *;`);
+};
+
 module.exports = {
   fetchReviews,
   fetchReviewByID,
+  addComment,
   fetchCommentsByReview,
-  // updateVotes,
+  updateVotes,
 };
