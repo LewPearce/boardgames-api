@@ -32,9 +32,10 @@ const getCommentsByReview = (req, res, next) => {
 };
 
 // const patchVotes = (req, res, next) => {
-//   const reviewPromise = fetchReviewByID(req);
-//   const votePromise = updateVotes(req);
-//   return Promise.all([reviewPromise, votePromise])
+//   // const reviewPromise = fetchReviewByID(req);
+//   // const votePromise = updateVotes(req);
+//   // return Promise.all([reviewPromise, votePromise])
+//   return updateVotes(req)
 //     .then(([result]) => {
 //       res.status(201).send({ OUTPUT: result });
 //     })
@@ -47,5 +48,5 @@ module.exports = {
   getReviews,
   getReviewByID,
   getCommentsByReview,
-  //  patchVotes
+  // patchVotes,
 };

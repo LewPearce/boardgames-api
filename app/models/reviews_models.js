@@ -59,11 +59,11 @@ const fetchCommentsByReview = (req) => {
 
 // const updateVotes = (req) => {
 //   let { body } = req;
-//   console.log(req);
-//   // return db.query(`UPDATE reviews
-//   // SET votes = votes + params
-//   // WHERE condition
-//   // RETURNING *;`);
+//   console.log(body);
+//   return db.query(`UPDATE reviews
+//   SET votes = votes + params
+//   WHERE condition
+//   RETURNING *;`);
 // };
 module.exports = {
   fetchReviews,
