@@ -271,12 +271,3 @@ describe("app", () => {
     });
   });
 });
-
-// Invalid review id
-// ask joe if this is neccessary to test again
-
-// -non existent review id
-// same with this one
-
-// -unnecessary properties on request's body are ignored
-//    a test with an added property
