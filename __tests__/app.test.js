@@ -107,14 +107,14 @@ describe("app", () => {
             expect(body).toEqual({ msg: "Oops! ID:999 doesn't exist!" });
           });
       });
-      it("PATCH: 201, accepts an object containing an integer value to increment the votes value by, will return the updated review", () => {
+      it("PATCH: 200, accepts an object containing an integer value to increment the votes value by, will return the updated review", () => {
         const voteUpBy2 = {
           inc_votes: "2",
         };
         return request(app)
           .patch("/api/reviews/1")
           .send(voteUpBy2)
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             expect(body).toEqual({
               updatedComment: {
@@ -131,14 +131,14 @@ describe("app", () => {
             });
           });
       });
-      it("PATCH: 201, correctly handles negative numbers", () => {
+      it("PATCH: 200, correctly handles negative numbers", () => {
         const voteDownBy2 = {
           inc_votes: "-2",
         };
         return request(app)
           .patch("/api/reviews/1")
           .send(voteDownBy2)
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             expect(body).toEqual({
               updatedComment: {
@@ -155,7 +155,7 @@ describe("app", () => {
             });
           });
       });
-      it("PATCH: 201, ignores extraneous properties", () => {
+      it("PATCH: 200, ignores extraneous properties", () => {
         const voteUpBy2 = {
           inc_votes: "2",
           votes: "73874837",
@@ -164,7 +164,7 @@ describe("app", () => {
         return request(app)
           .patch("/api/reviews/1")
           .send(voteUpBy2)
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             expect(body).toEqual({
               updatedComment: {
