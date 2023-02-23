@@ -47,7 +47,7 @@ const patchVotes = (req, res, next) => {
     Promise.all([votePromise, reviewPromise])
       // updateVotes(req)
       .then(([result]) => {
-        res.status(201).send({ updatedComment: result });
+        res.status(200).send({ updatedComment: result });
       })
       .catch((err) => {
         next(err);
