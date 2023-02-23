@@ -4,7 +4,7 @@ const handle400 = (err, req, res, next) => {
   } else if (err.code === "23503") {
     return res
       .status(404)
-      .send({ msg: `User '${req.body.username}' not found!` });
+      .send({ msg: `not found` });
   } else next(err);
 };
 

@@ -201,6 +201,29 @@ describe("app", () => {
               });
             });
         });
+        it("POST: 201, unnecessary properties on request body are ignored", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+            random: "this shouldn't impact the posting of a comment",
+          };
+          return request(app)
+            .post("/api/reviews/1/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                new_comment: {
+                  author: "mallionaire",
+                  body: "testing, testing, 1 2 3.",
+                  comment_id: 7,
+                  created_at: expect.any(String),
+                  review_id: 1,
+                  votes: 0,
+                },
+              });
+            });
+        });
         it("POST: 404, should throw an error if the user is valid but does not exist", () => {
           const newComment = {
             username: "not-a-username",
@@ -211,20 +234,49 @@ describe("app", () => {
             .send(newComment)
             .expect(404)
             .then(({ body }) => {
-              expect(body).toEqual({ msg: "User 'not-a-username' not found!" });
+              expect(body).toEqual({ msg: "not found" });
             });
         });
-        it("POST: 400, should throw an error if the body is empty", () => {
-          const newComment = { username: "mallionaire", body: "" };
+        it("POST: 404, review_id is valid but doesn't exist", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
           return request(app)
-            .post("/api/reviews/1/comments")
+            .post("/api/reviews/999/comments")
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).toEqual({
+                msg: "not found",
+              });
+            });
+        });
+        it("POST: 400, review_id is invalid", () => {
+          const newComment = {
+            username: "mallionaire",
+            body: "testing, testing, 1 2 3.",
+          };
+          return request(app)
+            .post("/api/reviews/bananas/comments")
             .send(newComment)
             .expect(400)
             .then(({ body }) => {
-              expect(body).toEqual({ msg: "failed to submit empty comment" });
+              expect(body).toEqual({
+                msg: "bad request",
+              });
             });
         });
       });
     });
   });
 });
+
+// Invalid review id
+// ask joe if this is neccessary to test again
+
+// -non existent review id
+// same with this one
+
+// -unnecessary properties on request's body are ignored
+//    a test with an added property

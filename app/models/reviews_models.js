@@ -56,19 +56,7 @@ const addComment = (req) => {
       [username, body, review_id]
     )
     .then((comment) => {
-      if (!comment) {
-        return Promise.reject({
-          status: 404,
-          msg: `Oops! that user doesn't exist!`,
-        });
-      } else if (comment.rows[0].body === "") {
-        return Promise.reject({
-          status: 400,
-          msg: `failed to submit empty comment`,
-        });
-      } else {
-        return comment.rows[0];
-      }
+      return comment.rows[0];
     });
 };
 
