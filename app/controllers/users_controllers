@@ -1,0 +1,13 @@
+const { fetchUsers } = require("../models/users_models");
+
+const getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((result) => {
+      res.status(200).send({ users: result });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getUsers };
