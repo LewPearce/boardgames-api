@@ -1,6 +1,6 @@
 const db = require("../../db/connection");
 
-const fetchReviews = () => {
+const fetchReviews = (req) => {
   return db
     .query(
       `SELECT reviews.owner,

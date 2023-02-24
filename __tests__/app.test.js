@@ -69,6 +69,24 @@ describe("app", () => {
           expect(body.reviews).toBeSorted("created_at", { descending: true });
         });
     });
+    describe("/api/reviews?category", () => {
+      it("QUERY: 200, accepts a category query which will specify the category of games to retrieve the reviews for", () => {
+        return request(app)
+          .get("/api/reviews?category=euro_game")
+          .expect(200)
+          .then(({ body }) => {
+            expect(
+              body.reviews.forEach((review) =>
+                expect(review).toEqual(
+                  expect.objectContaining({
+                    category: expect.any(String),
+                  })
+                )
+              )
+            );
+          });
+      });
+    });
     describe("/api/reviews/:review_id", () => {
       it("GET: 200, retrieves specific review data", () => {
         return request(app)
