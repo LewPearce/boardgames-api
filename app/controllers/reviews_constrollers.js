@@ -3,6 +3,7 @@ const {
   fetchReviewByID,
   addComment,
   fetchCommentsByReview,
+  updateVotes,
 } = require("../models/reviews_models");
 
 const getReviews = (req, res, next) => {
@@ -39,9 +40,25 @@ const getCommentsByReview = (req, res, next) => {
     });
 };
 
+const patchVotes = (req, res, next) => {
+  const reviewPromise = fetchReviewByID(req);
+  const votePromise = updateVotes(req);
+  return (
+    Promise.all([votePromise, reviewPromise])
+      // updateVotes(req)
+      .then(([result]) => {
+        res.status(200).send({ updatedComment: result });
+      })
+      .catch((err) => {
+        next(err);
+      })
+  );
+};
+
 module.exports = {
   getReviews,
   getReviewByID,
   postComment,
   getCommentsByReview,
+  patchVotes,
 };

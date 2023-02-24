@@ -74,9 +74,25 @@ const fetchCommentsByReview = (req) => {
     });
 };
 
+const updateVotes = (req) => {
+  let { body } = req;
+  return db
+    .query(
+      `UPDATE reviews
+  SET votes = votes + $1
+  WHERE review_id = $2
+  RETURNING *;`,
+      [body.inc_votes, req.params.review_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
 module.exports = {
   fetchReviews,
   fetchReviewByID,
   addComment,
   fetchCommentsByReview,
+  updateVotes,
 };
