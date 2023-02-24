@@ -21,6 +21,30 @@ describe("app", () => {
         expect(body).toEqual({ msg: "Path not found!" });
       });
   });
+  describe("/api/users", () => {
+    it("GET: 200, returnsa users objects containting an array of user objects with properties of username, name and avatar url", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          body.users.forEach((user) =>
+            expect(user).toEqual({
+              avatar_url: expect.any(String),
+              name: expect.any(String),
+              username: expect.any(String),
+            })
+          );
+        });
+    });
+    it("GET: 200, returns a users object containing an array of the correct length", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users.length).toBe(4);
+        });
+    });
+  });
   describe("/api/categories", () => {
     it("GET: 200, should return an array of the categories with a slug and a description", () => {
       return request(app)
@@ -271,16 +295,3 @@ describe("app", () => {
     });
   });
 });
-//   describe("/api/users", () => {
-//     it("GET: 200, returns an array of all users with a username, name and avatar url", () => {
-//       return request(app)
-//         .get("/api/users")
-//         .expect(200)
-//         .then(({ body }) => {
-//           body.users.forEach((user) =>
-//             expect(user).toEqual({ name: 380928309 })
-//           );
-//         });
-//     });
-//   });
-// });
