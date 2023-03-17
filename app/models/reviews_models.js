@@ -1,9 +1,9 @@
+const { query } = require("express");
 const db = require("../../db/connection");
 
-const fetchReviews = () => {
-  return db
-    .query(
-      `SELECT reviews.owner,
+function fetchReviews({ category, sort_by = "created_at", order_by = "DESC" }) {
+  let valueArray = [];
+  let queryString = `SELECT reviews.owner,
             reviews.title,
             reviews.review_id,
             reviews.category,
@@ -15,13 +15,77 @@ const fetchReviews = () => {
     FROM reviews
     LEFT JOIN comments
     ON reviews.review_id = comments.review_id
-    GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC`
-    )
-    .then(({ rows }) => {
+    `;
+  if (
+    category !== undefined &&
+    [`euro_game`, `social deduction`, `dexterity`].includes(category)
+  ) {
+    queryString += `WHERE category = $1
+    GROUP BY reviews.review_id`;
+    valueArray.push(category);
+  } else {
+    queryString += `GROUP BY reviews.review_id`;
+  }
+  if (
+    category !== undefined &&
+    ![`euro_game`, `social deduction`, `dexterity`].includes(category)
+  ) {
+    return Promise.reject({
+      status: 404,
+      msg: `Oops! Category:${category} doesn't exist!`,
+    });
+  }
+  if (
+    [
+      `owner`,
+      `title`,
+      `review_id`,
+      `category`,
+      `review_img_url`,
+      `created_at`,
+      `designer`,
+      `votes`,
+    ].includes(sort_by)
+  ) {
+    queryString += `
+    ORDER BY ${sort_by} `;
+  }
+  if (order_by === `DESC` || `ASC`) {
+    queryString += order_by;
+  }
+  if (order_by !== `DESC` && order_by !== `ASC`) {
+    return Promise.reject({
+      status: 400,
+      msg: `${order_by} is not a valid order, try DESC or ASC`,
+    });
+  }
+  if (
+    category === undefined &&
+    sort_by === "created_at" &&
+    order_by === "DESC"
+  ) {
+    queryString = queryString.replace("ORDER BY created_at", "");
+    queryString = queryString.replace("GROUP BY reviews.review_id", "");
+    queryString = queryString.replace("DESC", "");
+    let defaultEnd = `GROUP BY reviews.review_id
+    ORDER BY reviews.created_at DESC`;
+    queryString += defaultEnd;
+    console.log(queryString);
+  }
+  if (valueArray.length > 0) {
+    return db.query(queryString, valueArray).then(({ rows }) => {
       return rows;
     });
-};
+  } else {
+    console.log(queryString);
+    return db.query(queryString).then(({ rows }) => {
+      return rows;
+    });
+  }
+}
+// return db.query(dbQuery).then(({ rows }) => {
+//   return rows;
+// });
 
 const fetchReviewByID = (req) => {
   let { params } = req;

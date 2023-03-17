@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const request = require("supertest");
 const app = require("../app/app");
 const seed = require("../db/seeds/seed");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => {
   return seed(data);
@@ -92,6 +93,78 @@ describe("app", () => {
         .then(({ body }) => {
           expect(body.reviews).toBeSorted("created_at", { descending: true });
         });
+    });
+    describe("/api/reviews?category", () => {
+      it("QUERY: 200, accepts a category query which will specify the category of games to retrieve the reviews for", () => {
+        return request(app)
+          .get("/api/reviews?category=dexterity")
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body);
+            body.reviews.forEach((review) =>
+              expect(review).toEqual(
+                expect.objectContaining({
+                  category: "dexterity",
+                })
+              )
+            );
+          });
+      });
+      it("QUERY: 200, can handle a query with spaces", () => {
+        return request(app)
+          .get("/api/reviews?category=social+deduction")
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body);
+            body.reviews.forEach((review) =>
+              expect(review).toEqual(
+                expect.objectContaining({
+                  category: "social deduction",
+                })
+              )
+            );
+          });
+      });
+      it("QUERY: 404, throws error if category doesn't exist", () => {
+        return request(app)
+          .get("/api/reviews?category=not-a-real-category")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              msg: "Oops! Category:not-a-real-category doesn't exist!",
+            });
+          });
+      });
+    });
+    describe("/api/reviews?sort_by", () => {
+      it("QUERY: 200, accepts a sort_by value which returns the reviews sorted by the specified value", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=review_id")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted("review_id", { descending: true });
+          });
+      });
+    });
+    describe("/api/reviews?order_by", () => {
+      it("QUERY: 200, accepts an order_by value which returns the reviews ordered by ascending or descending", () => {
+        return request(app)
+          .get("/api/reviews?order_by=ASC")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.reviews).toBeSorted("review_id", { descending: false });
+          });
+      });
+      it("QUERY: 400, throws error if not given ASC or DESC", () => {
+        return request(app)
+          .get("/api/reviews?order_by=ascending")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              msg: `ascending is not a valid order, try DESC or ASC`,
+            });
+          });
+      });
     });
     describe("/api/reviews/:review_id", () => {
       it("GET: 200, retrieves specific review data", () => {
