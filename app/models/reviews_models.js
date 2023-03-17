@@ -18,7 +18,9 @@ function fetchReviews({ category, sort_by = "created_at", order_by = "DESC" }) {
     `;
   if (
     category !== undefined &&
-    [`euro_game`, `social deduction`, `dexterity`].includes(category)
+    [`euro_game`, `social deduction`, `dexterity`, `strategy`].includes(
+      category
+    )
   ) {
     queryString += `WHERE category = $1
     GROUP BY reviews.review_id`;
@@ -28,7 +30,9 @@ function fetchReviews({ category, sort_by = "created_at", order_by = "DESC" }) {
   }
   if (
     category !== undefined &&
-    ![`euro_game`, `social deduction`, `dexterity`].includes(category)
+    ![`euro_game`, `social deduction`, `dexterity`, `strategy`].includes(
+      category
+    )
   ) {
     return Promise.reject({
       status: 404,
